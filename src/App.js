@@ -1,25 +1,57 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from "react";
+import Navbar from "./componentes/Navbar";
+import Characters from "./componentes/characters"
+import Pagination from "./componentes/Pagination";
 
 function App() {
+
+const [characters, setcharacters] = useState([])
+const [info, setinfo] = useState({})
+
+  const url ="https://rickandmortyapi.com/api/character";
+
+  const fetchCharacters = (url) => {
+    fetch (url)
+    .then(Response => Response.json())
+    .then((data) => {
+      setcharacters(data.results);
+      setinfo(data.info); 
+    }) 
+    .catch (Error => console.log(Error))
+  };
+
+  const onPrevious = () =>{
+    fetchCharacters(info.prev);
+  }
+
+  const onNext = () =>{
+    fetchCharacters(info.next);
+  }
+
+  useEffect(() => {
+    fetchCharacters(url)
+  }, [])
+  
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  <>
+   <Navbar alexis= "Ricky and Morty app" />
+   <div className="container mt-5"> 
+       <Pagination 
+       prev={info.prev}
+       next={info.next}
+       onPrevious = {onPrevious}
+       onNext = {onNext} />
+       <Characters characters ={characters}/>
+       <Pagination 
+       prev={info.prev}
+       next={info.next}
+       onPrevious = {onPrevious}
+       onNext = {onNext} />
+   </div>
+  </>
+  ); 
+
 }
 
 export default App;
